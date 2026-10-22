@@ -1,8 +1,9 @@
 import { Keypair } from "@stellar/stellar-sdk";
+import { Buffer } from "buffer";
 
 /** Public key from a fixed 32-byte test seed. The StrKey secret is never stored. */
 export function publicKeyFromFixedSeed(fill: number): string {
-  return Keypair.fromRawEd25519Seed(new Uint8Array(32).fill(fill)).publicKey();
+  return Keypair.fromRawEd25519Seed(Buffer.alloc(32, fill)).publicKey();
 }
 
 export const mixedBatchKeys = {

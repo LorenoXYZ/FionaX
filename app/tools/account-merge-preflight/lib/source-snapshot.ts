@@ -87,7 +87,10 @@ export async function fetchSourceSnapshot(accountId: string, options: FetchOptio
   }
 
   const balances = Array.isArray(account.balances) ? account.balances : null;
-  const native = balances?.find((entry) => asRecord(entry)?.asset_type === "native");
+  if (!balances) {
+    throw new MergeFailure("request_failed");
+  }
+  const native = balances.find((entry) => asRecord(entry)?.asset_type === "native");
   const nativeBalance = asRecord(native)?.balance;
 
   if (typeof nativeBalance !== "string") {

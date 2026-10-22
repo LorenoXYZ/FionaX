@@ -39,7 +39,7 @@ export function formatTomlValue(value: TomlValue, kind: FieldKind): string {
     return value ? copy.booleanYes : copy.booleanNo;
   }
 
-  if (Array.isArray(value)) {
+  if (typeof value !== "string") {
     return value.map((item) => redact(item)).join("\n");
   }
 

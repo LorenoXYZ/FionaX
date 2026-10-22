@@ -24,13 +24,12 @@ transaction means for that value.
 - **`BigInt` end to end, never `Number`.** A sequence number is a 64-bit
   integer and routinely exceeds `Number.MAX_SAFE_INTEGER` (2^53 - 1) —
   converting through `Number` would silently round a real, valid sequence
-  number to the wrong value. `lib/next-sequence.ts` and
-  `lib/bigint-format.ts` only ever parse the Horizon string with `BigInt`
-  and serialize back to a string; nothing in this tool ever calls `Number()`
-  on a sequence number. This project's `tsconfig.json` targets `es5`, so
-  `BigInt` literals (`1n`) aren't available — every value is built with the
-  `BigInt(...)` constructor instead, matching the convention already used
-  in `reserve-calculator`.
+  number to the wrong value. Arithmetic in `lib/next-sequence.ts` parses the
+  Horizon string with `BigInt` and serializes back to a string;
+  `lib/bigint-format.ts` groups digits directly as text. Neither converts
+  sequence numbers through `Number()`. The project targets ES2020 to support
+  native BigInt arithmetic; this tool uses the `BigInt(...)` constructor,
+  matching the convention already used in `reserve-calculator`.
 - **The pending-transaction warning is unconditional, not derived.**
   Horizon's account resource has no field indicating "a transaction is
   currently in flight with this sequence number" — there is no way for this

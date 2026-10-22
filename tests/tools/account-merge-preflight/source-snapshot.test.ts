@@ -12,6 +12,13 @@ function routeFetch(account: unknown, offers: unknown): typeof fetch {
 }
 
 describe("fetchSourceSnapshot", () => {
+  it.each([undefined, null, {}, "invalid"])("rejects malformed balances with a tool error (%s)", async (balances) => {
+    await expect(fetchSourceSnapshot(sourceAccountId, {
+      network: "testnet",
+      fetchImpl: routeFetch({ ...eligibleSourceAccount, balances }, emptyOffers)
+    })).rejects.toMatchObject({ name: "MergeFailure", code: "request_failed" });
+  });
+
   it("reads a clear source and its empty offer page", async () => {
     const snapshot = await fetchSourceSnapshot(sourceAccountId, {
       network: "testnet",

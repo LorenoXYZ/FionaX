@@ -32,6 +32,13 @@ describe("formatAmount", () => {
 });
 
 describe("formatTomlValue", () => {
+  it("formats readonly lists and redacts secrets without modifying the source", () => {
+    const seed = Keypair.random().secret();
+    const values: readonly string[] = Object.freeze(["published value", seed]);
+    expect(formatTomlValue(values, "list")).toBe(`published value\n${copy.redactedSecret}`);
+    expect(values).toEqual(["published value", seed]);
+  });
+
   it("formats booleans, lists, and redacts secret seeds", () => {
     const seed = Keypair.random().secret();
     expect(formatTomlValue(true, "boolean")).toBe(copy.booleanYes);
