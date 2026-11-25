@@ -1,0 +1,2 @@
+import type { InspectorResult } from "../types";
+export function OfferCoverageNotice({ result }: { result: InspectorResult }) { return <section role="status" className="rounded border p-3 text-sm"><strong>{result.incomplete ? "Incomplete evidence" : result.groups.some(group => group.status === "mismatch") ? "Liability mismatch" : "Liability fields covered"}</strong><ul className="mt-2 list-disc pl-5">{result.notes.map(note => <li key={note}>{note}</li>)}</ul></section>; }
