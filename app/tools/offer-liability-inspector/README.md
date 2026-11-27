@@ -1,0 +1,7 @@
+# Offer Liability Coverage Inspector
+
+Accepts a public Ed25519 G account on the selected testnet or mainnet. Reads its Horizon account record and at most five 20-record offers pages (100 offers). No signing, submission, persistence, or offline mode. Secret seeds are rejected locally. Horizon URLs come from the existing network configuration.
+
+Current offers are decoded with exact integer stroops and `price_r` integer ratios. Selling evidence is the offer amount; buying evidence rounds the amount times price up to one stroop. Assets are keyed by type, code and issuer. Totals compare against each balance's declared buying and selling liabilities, including native XLM. A missing balance or liability field, or a full final page, produces incomplete evidence. Native reserve spendability cannot be established from the account and offers endpoints alone because they do not supply the network's current base reserve; the UI explicitly limits its assertion to liability fields. Unknown assets and malformed records fail closed. Duplicate offer IDs are counted once. Offer edits/cancellations between the account and offers reads may cause a mismatch; this is a bounded snapshot, not historical indexing. Issuer-owned assets without trustline balances remain incomplete.
+
+The UI has idle, loading, processing, error, success, and incomplete states. Tests inject deterministic Horizon-shaped account and page fixtures. There are no live network tests. Screenshot capture requires a browser environment and is not part of the unit suite.
