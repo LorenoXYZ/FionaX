@@ -1,0 +1,7 @@
+import { it,expect,vi } from "vitest";
+import { runClaimableBalanceExpiryCalendar } from "@/app/tools/claimable-balance-expiry-calendar/lib/claimableBalanceExpiryCalendar";
+import { claimant,balance,response } from "./fixtures/normal.fixture";
+const input={claimant,network:"testnet" as const};
+it("returns known and unresolved rows for different claimant predicates",async()=>{const dual={...balance,claimants:[balance.claimants[0],{destination:claimant,predicate:{relBefore:"3600"}}]};const outcome=await runClaimableBalanceExpiryCalendar(input,vi.fn(async()=>response([dual])) as typeof fetch,1893456000n);expect(outcome.ok).toBe(true);if(outcome.ok){expect(outcome.result.known[0].phase).toBe("expired");expect(outcome.result.unresolved[0].claimantIndex).toBe(1);}});
+it("rejects invalid input before making any request",async()=>{const fetcher=vi.fn();const outcome=await runClaimableBalanceExpiryCalendar({...input,claimant:"S".repeat(56)},fetcher as typeof fetch);expect(outcome).toEqual({ok:false,error:"invalid_input"});expect(fetcher).not.toHaveBeenCalled();});
+it("distinguishes a valid empty page from missing provider evidence",async()=>{const empty=await runClaimableBalanceExpiryCalendar(input,vi.fn(async()=>response([])) as typeof fetch);expect(empty.ok&&empty.result.complete).toBe(true);const missing=await runClaimableBalanceExpiryCalendar(input,vi.fn(async()=>new Response(JSON.stringify({}),{status:200})) as typeof fetch);expect(missing).toEqual({ok:false,error:"malformed_data"});});
